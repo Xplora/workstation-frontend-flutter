@@ -29,10 +29,10 @@ class SearchPanel extends StatelessWidget {
                         CircleAvatar(
                           backgroundColor: Colors.white.withOpacity(0.3),
                           child: MaterialButton(
-                              child: const Icon(Icons.arrow_back, color: Colors.white),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
+                            child: const Icon(Icons.arrow_back, color: Colors.white),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
                           ),
                         ),
                         CircleAvatar(
@@ -43,28 +43,45 @@ class SearchPanel extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildField("Destino", "${place}"),
+                    Align(
+                      alignment: Alignment.center, //para que este mas al medio las palabras
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                            maxWidth: 1200
                         ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                            child: _buildField("Fecha", "${date}")
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _buildField("Destino", "${place}"),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                                child: _buildField("Fecha", "${date}")
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                     const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildField("Precio", "${price}"),
+
+                    Align(
+                      alignment: Alignment.center,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                            maxWidth: 1200
                         ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                            child: _buildField("Experiencia", "${exp}")
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _buildField("Precio", "${price}"),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                                child: _buildField("Experiencia", "${exp}")
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                     const SizedBox(height: 15),
                   ],
@@ -74,7 +91,7 @@ class SearchPanel extends StatelessWidget {
               Expanded(
                   child: Center(
                     child: Text(
-                      "results"
+                        "results" //cambiar esto
                     ),
                   )
               )
@@ -96,17 +113,24 @@ class SearchPanel extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 5),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
+        Align(
+          alignment: Alignment.center,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 700),
+            child: Container(
+              width: 700, //ancho fijo de los campos
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                value,
+                style: const TextStyle(color: Colors.black),
+              ),
+            ),
           ),
-          child: Text(
-            value,
-            style: const TextStyle(color: Colors.black),
-          ),
-        )
+        ),
       ],
     );
   }

@@ -76,9 +76,9 @@ class _BaseScaffoldState extends State<BaseScaffold> {
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Favorite'),
-          BottomNavigationBarItem(icon: Icon(Icons.map_outlined), label: 'Itinerarios'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite_sharp), label: 'Favorite'),
+          BottomNavigationBarItem(icon: Icon(Icons.book_rounded), label: 'Itinerarios'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_pin_circle_rounded), label: 'Perfil'),
         ],
       ),
     );
