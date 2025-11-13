@@ -3,6 +3,7 @@ import 'package:trip_match/baseScaffold.dart';
 import 'package:trip_match/searchpanel.dart';
 import 'package:trip_match/models/experience.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:trip_match/services/favoritesService.dart';
 
 void main() {
   runApp(MyApp());
@@ -320,13 +321,17 @@ class _HomePanelState extends State<HomePanel> {
           ),
           Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: IconButton(
-              icon: Icon(
-                exp.isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: exp.isFavorite ? Colors.red : Colors.grey,
-              ),
-              onPressed: () {
-                // Toggle favorite
+            child: ValueListenableBuilder<Set<String>>(
+              valueListenable: favoritesNotifier,
+              builder: (context, favIds, _) {
+                final isFavorite = favIds.contains(exp.id);
+                return IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: exp.isFavorite ? Colors.red : Colors.grey,
+                  ),
+                  onPressed: () => toggleFavoriteById(exp.id),
+                );
               },
             ),
           ),

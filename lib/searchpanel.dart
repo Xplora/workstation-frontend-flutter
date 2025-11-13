@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:trip_match/models/experience.dart';
 import 'package:trip_match/experienceDetailView.dart';
+import 'package:trip_match/services/favoritesService.dart';
+
 
 class SearchPanel extends StatefulWidget {
   const SearchPanel({
@@ -109,7 +111,7 @@ class _SearchPanelState extends State<SearchPanel> {
                       padding: const EdgeInsets.all(20),
                       itemCount: searchResults.length,
                       itemBuilder: (context, index) {
-                        return _buildExperienceCard(searchResults[index]);
+                        return _buildExperienceCard(context, searchResults[index]);
                       },
                     ),
             )
@@ -151,7 +153,7 @@ class _SearchPanelState extends State<SearchPanel> {
     );
   }
 
-  Widget _buildExperienceCard(Experience exp) {
+  Widget _buildExperienceCard(BuildContext context, Experience exp) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -236,15 +238,18 @@ class _SearchPanelState extends State<SearchPanel> {
                     color: Color(0xFF2EBFAF),
                   ),
                 ),
-                IconButton(
-                  icon: Icon(
-                    exp.isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: exp.isFavorite ? Colors.red : Colors.grey,
-                    size: 20,
-                  ),
-                  onPressed: () {
-                    // Toggle favorite
-                  },
+                ValueListenableBuilder<Set<String>>(
+                  valueListenable: favoritesNotifier,
+                  builder: (context, ids, _){
+                    final isFavorite= ids.contains(exp.id);
+                    return IconButton(
+                       icon: Icon( isFavorite ? Icons.favorite : Icons.favorite_border,
+                       color: exp.isFavorite ? Colors.red : Colors.grey,
+                       size: 20,
+                       ),
+                       onPressed: () => toggleFavoriteById(exp.id), // Toggle favorite
+                    );
+                  }
                 ),
               ],
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trip_match/models/experience.dart';
 import 'package:trip_match/reservationView.dart';
+import 'package:trip_match/services/favoritesService.dart';
 
 class ExperienceDetailView extends StatefulWidget {
   final Experience experience;
@@ -12,13 +13,13 @@ class ExperienceDetailView extends StatefulWidget {
 }
 
 class _ExperienceDetailViewState extends State<ExperienceDetailView> {
-  bool isFavorite = false;
+  //bool isFavorite = false;
 
-  @override
-  void initState() {
-    super.initState();
-    isFavorite = widget.experience.isFavorite;
-  }
+  //@override
+  //void initState() {
+  //  super.initState();
+  //  isFavorite = widget.experience.isFavorite;
+  //}
 
   @override
   Widget build(BuildContext context) {
@@ -63,16 +64,20 @@ class _ExperienceDetailViewState extends State<ExperienceDetailView> {
                       right: 20,
                       child: CircleAvatar(
                         backgroundColor: Colors.white.withOpacity(0.9),
-                        child: IconButton(
-                          icon: Icon(
-                            isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: isFavorite ? Colors.red : Colors.black,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              isFavorite = !isFavorite;
-                            });
-                          },
+                        child: ValueListenableBuilder<Set<String>>(
+                            valueListenable: favoritesNotifier,
+                            builder: (context, favIds, _) {
+                              final isFavorite = favIds.contains(widget.experience.id);
+                              return IconButton(
+                                icon: Icon(
+                                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                                  color: isFavorite ? Colors.red : Colors.black,
+                                ),
+                                onPressed: () {
+                                  toggleFavoriteById(widget.experience.id);
+                                },
+                              );
+                            }
                         ),
                       ),
                     ),
