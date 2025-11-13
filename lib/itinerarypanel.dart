@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:trip_match/baseScaffold.dart';
+import 'package:trip_match/services/itineraryService.dart';
 
 class ItineraryPage extends StatefulWidget {
   const ItineraryPage({super.key});
@@ -92,8 +93,37 @@ class _ItineraryPageState extends State<ItineraryPage> {
   }
 
   Widget _buildListView() {
-    return const Center(
-      child: Text("Aquí se mostrarán los itinerarios en lista."),
+    //return const Center(
+    //  child: Text("Aquí se mostrarán los itinerarios en lista."),
+    //);
+    return ValueListenableBuilder<List<ItineraryItem>>(
+      valueListenable: itineraryNotifier,
+      builder: (context, items, _) {
+        if (items.isEmpty) {
+          return const Center(child: Text('No hay reservas aún'));
+        }
+        return ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: items.length,
+          separatorBuilder: (_, __) => const Divider(),
+          itemBuilder: (context, i) {
+            final it = items[i];
+            return ListTile(
+              leading: Image.network(
+                it.experience.imageUrl,
+                width: 56,
+                height: 56,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(width: 56, height: 56, color: Colors.grey.shade300),
+              ),
+              title: Text(it.experience.title),
+              subtitle: Text('Fecha: ${it.date} • Personas: ${it.people}'),
+              trailing: Text('S/${it.totalPrice.toInt()}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            );
+          },
+        );
+      },
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trip_match/models/experience.dart';
+import 'package:trip_match/services/itineraryService.dart';
 
 class ReservationView extends StatefulWidget {
   final Experience experience;
@@ -260,6 +261,15 @@ class _ReservationViewState extends State<ReservationView> {
                     ),
                   ),
                   onPressed: () {
+                    final item = ItineraryItem(
+                      id: '${DateTime.now().millisecondsSinceEpoch}-${widget.experience.id}',
+                      experience: widget.experience,
+                      date: dateController.text,
+                      people: int.tryParse(peopleController.text) ?? 1,
+                      totalPrice: widget.experience.price, // puedes multiplicar por personas si aplica
+                      schedule: scheduleController.text.isEmpty ? widget.experience.startTime : scheduleController.text,
+                    );
+                    addItineraryItem(item);
                     _showReservationConfirmation(context);
                   },
                   child: const Text(
