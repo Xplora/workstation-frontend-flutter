@@ -110,7 +110,7 @@ class _ItineraryPageState extends State<ItineraryPage> {
           itemBuilder: (context, i) {
             final it = items[i];
             return ListTile(
-              leading: Image.network(
+              /*leading: Image.network(
                 it.experience.imageUrl,
                 width: 56,
                 height: 56,
@@ -120,7 +120,7 @@ class _ItineraryPageState extends State<ItineraryPage> {
               title: Text(it.experience.title),
               subtitle: Text('Fecha: ${it.date} • Personas: ${it.people}'),
               trailing: Text('S/${it.totalPrice.toInt()}', style: const TextStyle(fontWeight: FontWeight.bold)),
-            );
+            */);
           },
         );
       },

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trip_match/baseScaffold.dart';
 import 'package:trip_match/models/experience.dart';
-import 'package:trip_match/experienceDetailView.dart';
+import 'package:trip_match/UI/experienceDetailView.dart';
 import 'package:trip_match/services/favoritesService.dart';
 
 class FavoriteView extends StatelessWidget {
@@ -36,13 +36,13 @@ class FavoriteView extends StatelessWidget {
                 separatorBuilder: (_, __) => const Divider(),
                 itemBuilder: (context, index) {
                   final exp = list[index];
-                  return ListTile(
+                  return ListTile(/*
                     leading: Image.network(exp.imageUrl, width: 56, height: 56, fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(width: 56, height: 56, color: Colors.grey.shade300)),
                     title: Text(exp.title),
                     subtitle: Text(exp.location),
                     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ExperienceDetailView(experience: exp))),
                     trailing: IconButton(icon: const Icon(Icons.remove_circle_outline), onPressed: () => toggleFavoriteById(exp.id)),
-                  );
+                  */);
                 },
               ),
             ]),

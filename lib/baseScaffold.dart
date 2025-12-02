@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:trip_match/itinerarypanel.dart';
-import 'package:trip_match/main.dart';
-import 'package:trip_match/favoriteView.dart';
-import 'package:trip_match/profilePage.dart';
+import 'package:trip_match/UI/itinerarypanel.dart';
+import 'package:trip_match/UI/favoriteView.dart';
+import 'package:trip_match/UI/profilePage.dart';
+
+import 'UI/HomePanel.dart';
 
 class BaseScaffold extends StatefulWidget {
   final Widget body; // contenido de la página

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:trip_match/models/experience.dart';
-import 'package:trip_match/experienceDetailView.dart';
+import 'package:trip_match/UI/experienceDetailView.dart';
 import 'package:trip_match/services/favoritesService.dart';
+import 'package:trip_match/utils/http_helper.dart';
 
-
+/*
 class SearchPanel extends StatefulWidget {
   const SearchPanel({
     super.key,
@@ -20,15 +21,20 @@ class SearchPanel extends StatefulWidget {
 }
 
 class _SearchPanelState extends State<SearchPanel> {
-  List<Experience> searchResults = [];
+  List<Experience> experience = [];
+  int? experiencesCount;
+  bool loading = true;
+  HttpHelper? helper;
+  ScrollController? scrollController;
+
+  Future initialize() async{
+  }
 
   @override
   void initState() {
     super.initState();
-    // Simular búsqueda con datos mockeados
-    searchResults = MockData.getExperiences()
-        .where((exp) => exp.location.toLowerCase().contains(widget.place.toLowerCase()))
-        .toList();
+    helper = HttpHelper();
+    initialize();
   }
 
   @override
@@ -77,7 +83,7 @@ class _SearchPanelState extends State<SearchPanel> {
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: _buildField("Fecha", widget.date.isEmpty ? "01/02/2025" : widget.date),
+                        child: _buildField("Fecha", widget.date.isEmpty ? "xx/xx/xxxx" : widget.date),
                       ),
                     ],
                   ),
@@ -86,7 +92,7 @@ class _SearchPanelState extends State<SearchPanel> {
                   Row(
                     children: [
                       Expanded(
-                        child: _buildField("Presupuesto", widget.price.isEmpty ? "Max. 1200" : widget.price),
+                        child: _buildField("Presupuesto", widget.price.isEmpty ? "Max. XXX" : widget.price),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -100,7 +106,7 @@ class _SearchPanelState extends State<SearchPanel> {
             ),
 
             Expanded(
-              child: searchResults.isEmpty
+              child: experience.isEmpty
                   ? const Center(
                       child: Text(
                         "No se encontraron experiencias",
@@ -109,9 +115,9 @@ class _SearchPanelState extends State<SearchPanel> {
                     )
                   : ListView.builder(
                       padding: const EdgeInsets.all(20),
-                      itemCount: searchResults.length,
+                      itemCount: experience.length,
                       itemBuilder: (context, index) {
-                        return _buildExperienceCard(context, searchResults[index]);
+                        return _buildExperienceCard(context, experience[index]);
                       },
                     ),
             )
@@ -259,3 +265,4 @@ class _SearchPanelState extends State<SearchPanel> {
     );
   }
 }
+*/

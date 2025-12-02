@@ -1,34 +1,34 @@
 class Experience {
-  final String id;
-  final String title;
-  final String location;
-  final String description;
-  final String imageUrl;
-  final double price;
-  final String startTime;
-  final String endTime;
-  final String duration;
-  final List<String> daysAvailable;
-  final String category;
-  final String provider;
-  final List<String> includes;
-  final bool isFavorite;
+   String? id;
+   String? title;
+   String? location;
+   String? description;
+   String? imageUrl;
+   double? price;
+   String? startTime;
+   String? endTime;
+   String? duration;
+   List<String>? daysAvailable;
+   String? category;
+   String? provider;
+   List<String>? includes;
+   bool? isFavorite;
 
   Experience({
-    required this.id,
-    required this.title,
-    required this.location,
-    required this.description,
-    required this.imageUrl,
-    required this.price,
-    required this.startTime,
-    required this.endTime,
-    required this.duration,
-    required this.daysAvailable,
-    required this.category,
-    required this.provider,
-    required this.includes,
-    this.isFavorite = false,
+     this.id,
+     this.title,
+     this.location,
+     this.description,
+     this.imageUrl,
+     this.price,
+     this.startTime,
+     this.endTime,
+     this.duration,
+     this.daysAvailable,
+     this.category,
+     this.provider,
+     this.includes,
+    this.isFavorite
   });
 
   Experience copyWith({bool? isFavorite}) {
@@ -48,6 +48,49 @@ class Experience {
       includes: includes,
       isFavorite: isFavorite ?? this.isFavorite,
     );
+  }
+
+  Experience.fromJson(Map<String, dynamic> json){
+    id = json['id'];
+    title = json['title'];
+    location = json['location'];
+    description = json['description'];
+    imageUrl = json['imageUrl'];
+    price = json['price'].toDouble();
+    startTime = json['startTime'];
+    endTime = json['endTime'];
+    duration = json['duration'];
+    daysAvailable = json['daysAvailable'];
+    category = json['category'];
+    provider = json['provider'];
+    includes = json['includes'];
+    isFavorite = json['isFavorite'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['title'] = this.title;
+    data['location'] = this.location;
+    data['description'] = this.description;
+    data['imageUrl'] = this.imageUrl;
+    data['price'] = this.price;
+    data['startTime'] = this.startTime;
+    data['endTime'] = this.endTime;
+    data['duration'] = this.duration;
+    data['daysAvailable'] = this.daysAvailable;
+    data['category'] = this.category;
+    data['provider'] = this.provider;
+    data['includes'] = this.includes;
+    data['isFavorite'] = this.isFavorite;
+    return data;
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+    };
   }
 }
 

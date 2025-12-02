@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:trip_match/models/experience.dart';
-import 'package:trip_match/reservationView.dart';
+import 'package:trip_match/UI/reservationView.dart';
 import 'package:trip_match/services/favoritesService.dart';
-
+/*
 class ExperienceDetailView extends StatefulWidget {
   final Experience experience;
 
@@ -260,3 +260,4 @@ class _ExperienceDetailViewState extends State<ExperienceDetailView> {
     );
   }
 }
+*/
