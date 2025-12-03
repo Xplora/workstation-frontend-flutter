@@ -6,8 +6,8 @@ import '../models/loginRequest.dart';
 import '../models/registerRequest.dart';
 
 class AuthRepository {
-  //static const String baseUrl = "https://xplora-backend.onrender.com/api/v1/iam/auth";
-  static const String baseUrl = "http://localhost:5260/api/v1/iam/auth";
+  static const String baseUrl = "https://xplora-backend.onrender.com/api/v1/iam/auth";
+  //static const String baseUrl = "http://localhost:5260/api/v1/iam/auth";
 
   Future<AuthenticatedUserModel?> login(LoginRequest request) async {
     print("$baseUrl/signin");

@@ -1,12 +1,10 @@
-
-
 import 'package:trip_match/models/tourist.dart';
 
 class User {
-  String? userId; // Usamos String para el Guid/UUID
+  String? userId;
   String? firstName;
   String? lastName;
-  String? number;
+  String? phone;
   String? email;
   String? password;
   Tourist? tourist;
@@ -15,7 +13,7 @@ class User {
     this.userId,
     this.firstName,
     this.lastName,
-    this.number,
+    this.phone,
     this.email,
     this.password,
     this.tourist,
@@ -25,10 +23,9 @@ class User {
     userId = json['userId'];
     firstName = json['firstName'];
     lastName = json['lastName'];
-    number = json['number'];
+    phone = json['phone'];
     email = json['email'];
     password = json['password'];
-    tourist = json['tourist'] != null ? Tourist.fromJson(json['tourist']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -36,12 +33,9 @@ class User {
     data['userId'] = this.userId;
     data['firstName'] = this.firstName;
     data['lastName'] = this.lastName;
-    data['number'] = this.number;
+    data['phone'] = this.phone;
     data['email'] = this.email;
     data['password'] = this.password;
-    if (tourist != null) {
-      data['tourist'] = tourist!.toJson();
-    }
     return data;
   }
 
@@ -50,6 +44,7 @@ class User {
       'userId': userId,
       'firstName': firstName,
       'email': email,
+      'phone': phone, // Usando 'phone' en toMap
     };
   }
 }

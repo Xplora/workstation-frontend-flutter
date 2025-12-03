@@ -1,51 +1,86 @@
 import 'package:flutter/material.dart';
-import 'package:trip_match/baseScaffold.dart';
 import 'package:trip_match/models/experience.dart';
-import 'package:trip_match/UI/experienceDetailView.dart';
 import 'package:trip_match/services/favoritesService.dart';
+import '../IAM/services/authSession.dart';
+import '../utils/http_helper.dart';
 
-class FavoriteView extends StatelessWidget {
+class FavoriteView extends StatefulWidget {
+  @override
+  State<FavoriteView> createState() => _FavoriteViewState();
+}
+
+class _FavoriteViewState extends State<FavoriteView> {
+  String? userId;
+  bool loading = true;
+  List<Experience> favExperiences = [];
+  HttpHelper? helper;
+
+  @override
+  void initState() {
+    super.initState();
+    helper = HttpHelper();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    userId = await AuthSession.getUserId();
+
+    if (userId != null) {
+      await loadFavoritesFromDB(userId!);
+      favExperiences = await helper!.getFavoriteExperiences(userId!);
+    }
+
+    setState(() => loading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BaseScaffold(
-      currentIndex: 1,
-      body: ValueListenableBuilder<Set<String>>(
+
+    return Scaffold(
+      appBar: AppBar(title: const Text("Mis Favoritos")),
+      body: loading
+          ? const Center(child: CircularProgressIndicator())
+          : ValueListenableBuilder<Set<String>>(
         valueListenable: favoritesNotifier,
         builder: (context, favIds, _) {
-          final list = MockData.getExperiences().where((e) => favIds.contains(e.id)).toList();
-          if (list.isEmpty) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: const [
-                Text("Mis Favoritos", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                SizedBox(height: 30),
-                Center(child: Text('No hay favoritos')),
-              ]),
-            );
+
+          if (favIds.isEmpty) {
+            return const Center(child: Text("No hay favoritos "));
           }
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text("Mis Favoritos", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 12),
-              ListView.separated(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: list.length,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (context, index) {
-                  final exp = list[index];
-                  return ListTile(/*
-                    leading: Image.network(exp.imageUrl, width: 56, height: 56, fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(width: 56, height: 56, color: Colors.grey.shade300)),
-                    title: Text(exp.title),
-                    subtitle: Text(exp.location),
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ExperienceDetailView(experience: exp))),
-                    trailing: IconButton(icon: const Icon(Icons.remove_circle_outline), onPressed: () => toggleFavoriteById(exp.id)),
-                  */);
-                },
-              ),
-            ]),
+          return ListView.builder(
+            padding: const EdgeInsets.all(12),
+            itemCount: favExperiences.length,
+            itemBuilder: (context, index) {
+              final exp = favExperiences[index];
+
+              return ListTile(
+                leading: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    exp.experienceImages?[0].url ?? "",
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                    errorBuilder: (ctx, error, stack) => Container(
+                      width: 50,
+                      height: 50,
+                      color: Colors.grey.shade300,
+                      child: Icon(Icons.image, color: Colors.grey.shade600, size: 24),
+                    ),
+                    loadingBuilder: (ctx, child, loading) {
+                      if (loading == null) return child;
+                      return Container(
+                        width: 50,
+                        height: 50,
+                        color: Colors.grey.shade300,
+                        child: Icon(Icons.image, color: Colors.grey.shade600, size: 24),
+                      );
+                    },
+                  ),
+                ),
+              );
+            },
           );
         },
       ),

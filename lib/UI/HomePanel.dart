@@ -33,23 +33,11 @@ class _HomePanelState extends State<HomePanel> {
 
   List<Experience> recommendationsExp = [];
   List<Category> categories = [];
+
   int? expCount;
   int? catCount;
   bool isLoading = true;
   HttpHelper? helper;
-
-  Future fetchRecommendations() async{
-    helper!.getExperiences().then((value) {
-      setState(() {
-        recommendationsExp = value;
-        expCount = recommendationsExp!.length;
-      });
-
-      if(recommendationsExp.length > 3) {
-        isLoading = false;
-      }
-    });
-  }
 
   Future<void> loadSessionData() async {
     token = await AuthSession.getToken();
@@ -57,9 +45,12 @@ class _HomePanelState extends State<HomePanel> {
     currentUser = await helper!.getUser(userId!);
     nickname = currentUser!.firstName!;
     categories = await helper!.getCategories();
-
+    recommendationsExp = await helper!.getExperiences();
+    await loadFavoritesFromDB(userId!);
 
     print("CATEGORÍAS CARGADAS: ${categories.length}");
+    print("EXPERIENCIAS CARGADAS: ${recommendationsExp.length}");
+
     setState(() {
       loading = false;
     });
@@ -70,13 +61,12 @@ class _HomePanelState extends State<HomePanel> {
   void initState(){
     super.initState();
     helper = HttpHelper();
-    fetchRecommendations();
     loadSessionData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Material(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -279,51 +269,90 @@ class _HomePanelState extends State<HomePanel> {
       ),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12),
-              bottomLeft: Radius.circular(12),
-            ),
-            child: Image.network(
-              exp.imageUrl.toString(),
-              width: 80,
-              height: 80,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  width: 80,
-                  height: 80,
-                  color: Colors.grey.shade300,
-                  child: const Icon(Icons.image, color: Colors.grey),
-                );
-              },
-            ),
+          // 1. Imagen con el icono de Corazón Superpuesto
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
+                  topRight: Radius.circular(12), // Añadido para la segunda imagen
+                  bottomRight: Radius.circular(12), // Añadido para la segunda imagen
+                ),
+                child: Image.network(
+                  exp.experienceImages![0].url.toString(),
+                  width: 100, // Aumentado el ancho ligeramente para parecerse más
+                  height: 100, // Aumentado el alto ligeramente para parecerse más
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 100,
+                      height: 100,
+                      color: Colors.grey.shade300,
+                      child: const Icon(Icons.image, color: Colors.grey),
+                    );
+                  },
+                ),
+              ),
+              // Icono de Corazón Superpuesto (similar a la segunda imagen)
+              Positioned(
+                top: 8,
+                left: 8,
+                child: ValueListenableBuilder<Set<String>>(
+                  valueListenable: favoritesNotifier,
+                  builder: (context, favIds, _) {
+                    final isFavorite = favIds.contains(exp.id.toString());
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.8),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : Colors.grey,
+                          size: 20,
+                        ),
+                        onPressed: () async {
+                          await toggleFavoriteById(exp.id.toString(), userId.toString());
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
+          const SizedBox(width: 12),
+
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(vertical: 12), // Ajuste de padding
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     exp.title.toString(),
                     style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${exp.startTime} | ${exp.endTime}',
+                    '10:00am | 2:00pm',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
                       color: Colors.grey.shade600,
                     ),
                   ),
                   Text(
-                    exp.duration.toString(),
+                    '${exp.duration.toString()} horas',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
                       color: Colors.grey.shade600,
                     ),
                   ),
@@ -331,33 +360,20 @@ class _HomePanelState extends State<HomePanel> {
               ),
             ),
           ),
+
+          // 3. Precio
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: Text(
               'S/${exp.price}',
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF2EBFAF),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: ValueListenableBuilder<Set<String>>(
-              valueListenable: favoritesNotifier,
-              builder: (context, favIds, _) {
-                final isFavorite = favIds.contains(exp.id);
-                return IconButton(
-                  icon: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    //color: exp.isFavorite ? Colors.red : Colors.grey,
-                  ),
-                  onPressed: () => toggleFavoriteById(exp.id.toString()),
-                );
-              },
-            ),
-          ),
+
         ],
       ),
     );

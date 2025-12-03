@@ -6,7 +6,7 @@ import 'package:trip_match/UI/profilePage.dart';
 import 'UI/HomePanel.dart';
 
 class BaseScaffold extends StatefulWidget {
-  final Widget body; // contenido de la página
+  final Widget body;
   final int currentIndex;
 
   const BaseScaffold({super.key, required this.body, required this.currentIndex});
@@ -16,30 +16,20 @@ class BaseScaffold extends StatefulWidget {
 }
 
 class _BaseScaffoldState extends State<BaseScaffold> {
+
+  final List<String> _routes = const [
+    "/home", // index 0
+    "/favorite", // index 1
+    "/itineraries", // index 2
+    "/profile", // index 3
+  ];
+
   void _onItemTapped(int index) {
-    if (index == widget.currentIndex) return; // Evita recargar la misma vista
+    if (index == widget.currentIndex) return;
 
-    Widget page;
-    switch (index) {
-      case 0:
-        page = HomePanel();
-        break;
-      case 1:
-        page = FavoriteView();
-        break;
-      case 2:
-        page = ItineraryPage();
-        break;
-      case 3:
-        page = ProfilePage();
-        break;
-      default:
-        page = HomePanel();
-    }
-
-    Navigator.pushReplacement(
+    Navigator.pushReplacementNamed(
       context,
-      MaterialPageRoute(builder: (context) => page),
+      _routes[index],
     );
   }
 
