@@ -5,13 +5,13 @@ class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
 
 class AuthLoggedIn extends AuthState {
-  final int userId;
+  final String userId;
   final String token;
   AuthLoggedIn(this.userId, this.token);
 }
 
 class AuthNeedsProfile extends AuthState {
-  final int userId;
+  final String userId;
   AuthNeedsProfile(this.userId);
 }
 

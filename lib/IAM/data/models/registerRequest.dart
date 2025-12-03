@@ -33,8 +33,8 @@ class RegisterRequest {
       jsonMap["agencyName"] = agencyName;
       jsonMap["ruc"] = ruc;
     } else {
-      jsonMap["agencyName"] = "";
-      jsonMap["ruc"] = "";
+      jsonMap["agencyName"] = "string";
+      jsonMap["ruc"] = "string";
     }
 
     return jsonMap;

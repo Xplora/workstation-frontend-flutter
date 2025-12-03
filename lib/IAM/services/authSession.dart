@@ -5,10 +5,10 @@ class AuthSession {
   static const _userIdKey = "auth_user_id";
 
   /// Guarda el token y el ID del usuario
-  static Future<void> saveSession(String token, int userId) async {
+  static Future<void> saveSession(String token, String userId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_tokenKey, token);
-    await prefs.setInt(_userIdKey, userId);
+    await prefs.setString(_userIdKey, userId);
   }
 
   /// Obtiene el token guardado

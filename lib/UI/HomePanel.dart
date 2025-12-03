@@ -3,6 +3,7 @@ import 'package:trip_match/baseScaffold.dart';
 import 'package:trip_match/UI/searchpanel.dart';
 import 'package:trip_match/models/experience.dart';
 import 'package:trip_match/models/category.dart';
+import 'package:trip_match/models/user.dart';
 import 'package:trip_match/services/favoritesService.dart';
 import 'package:trip_match/utils/http_helper.dart';
 
@@ -14,6 +15,7 @@ class HomePanel extends StatefulWidget {
 class _HomePanelState extends State<HomePanel> {
   String? selectedPlace;
   String? selectedCategory;
+
 
   final TextEditingController expController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
@@ -59,176 +61,173 @@ class _HomePanelState extends State<HomePanel> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScaffold(
-      currentIndex: 0,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //Title & Subtitle
-              const Text(
-                "Hola, NickName",
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              const Text(
-                "Encontremos tu próxima experiencia única",
-                style: TextStyle(color: Colors.black54, fontSize: 14),
-              ),
-              const SizedBox(height: 20),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            //Title & Subtitle
+            const Text(
+              "Hola, NickName",
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 5),
+            const Text(
+              "Encontremos tu próxima experiencia única",
+              style: TextStyle(color: Colors.black54, fontSize: 14),
+            ),
+            const SizedBox(height: 20),
 
-              //Search Campus - Destino
-              DropdownButtonFormField<String>(
-                value: selectedPlace,
-                decoration: InputDecoration(
-                  labelText: "Destino",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+            //Search Campus - Destino
+            DropdownButtonFormField<String>(
+              value: selectedPlace,
+              decoration: InputDecoration(
+                labelText: "Destino",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                items: const[
-                  DropdownMenuItem(value: "Lima", child: Text("Lima")),
-                  DropdownMenuItem(value: "Arequipa", child: Text("Arequipa")),
-                  DropdownMenuItem(value: "Trujillo", child: Text("Trujillo")),
-                  DropdownMenuItem(value: "Chiclayo", child: Text("Chiclayo")),
-                  DropdownMenuItem(value: "Ica", child: Text("Ica")),
-                  DropdownMenuItem(value: "Piura", child: Text("Piura")),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    selectedPlace = value;
-                  });
-                },
+                contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
               ),
-              const SizedBox(height: 15),
+              items: const[
+                DropdownMenuItem(value: "Lima", child: Text("Lima")),
+                DropdownMenuItem(value: "Arequipa", child: Text("Arequipa")),
+                DropdownMenuItem(value: "Trujillo", child: Text("Trujillo")),
+                DropdownMenuItem(value: "Chiclayo", child: Text("Chiclayo")),
+                DropdownMenuItem(value: "Ica", child: Text("Ica")),
+                DropdownMenuItem(value: "Piura", child: Text("Piura")),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  selectedPlace = value;
+                });
+              },
+            ),
+            const SizedBox(height: 15),
 
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: dateController,
-                      readOnly: true,
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: dateController,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      labelText: "Día",
+                      hintText: "Día",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+                    ),
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime(2030),
+                        locale: const Locale('es', 'ES'),
+                      );
+
+                      if (pickedDate != null) {
+                        String formattedDate =
+                            "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
+                        setState(() {
+                          dateController.text = formattedDate;
+                        });
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextFormField(
+                      controller: priceController,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: "Día",
-                        hintText: "Día",
+                        labelText: "Presupuesto",
+                        hintText: "Presupuesto",
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                      ),
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2020),
-                          lastDate: DateTime(2030),
-                          locale: const Locale('es', 'ES'),
-                        );
+                      )
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 15),
 
-                        if (pickedDate != null) {
-                          String formattedDate =
-                              "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
-                          setState(() {
-                            dateController.text = formattedDate;
-                          });
-                        }
-                      },
+            TextFormField(
+              controller: expController,
+              decoration: InputDecoration(
+                labelText: "Tipo de experiencia",
+                hintText: "Tipo de experiencia",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2EBFAF),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextFormField(
-                        controller: priceController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          labelText: "Presupuesto",
-                          hintText: "Presupuesto",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                        )
+                  onPressed: (){
+                    final place = selectedPlace ?? "Arequipa";
+                    final price = priceController.text.isEmpty ? "Max. 1200" : priceController.text;
+                    final date = dateController.text;
+                    final exp = expController.text;
+
+                    /*Navigator.push(
+                        context,
+                      MaterialPageRoute(
+                            builder: (BuildContext context) => SearchPanel(
+                                place: place,
+                                price: price,
+                                date: date,
+                                exp: exp,
+                            ),
+                        ),
+                    );*/
+                  },
+                  child: const Text(
+                    "Buscar",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
                     ),
                   )
-                ],
               ),
-              const SizedBox(height: 15),
+            ),
+            const SizedBox(height: 20),
 
-              TextFormField(
-                controller: expController,
-                decoration: InputDecoration(
-                  labelText: "Tipo de experiencia",
-                  hintText: "Tipo de experiencia",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                ),
-              ),
-              const SizedBox(height: 20),
+            Wrap(
+              spacing: 10,
+              children: [
+                for (var cat in categories)
+                  _buildFilterChip(cat.name.toString()),
+              ],
+            ),
+            const SizedBox(height: 25),
 
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2EBFAF),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    onPressed: (){
-                      final place = selectedPlace ?? "Arequipa";
-                      final price = priceController.text.isEmpty ? "Max. 1200" : priceController.text;
-                      final date = dateController.text;
-                      final exp = expController.text;
+            // Recomendaciones para ti
+            const Text(
+              "Recomendaciones para ti",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 15),
 
-                      /*Navigator.push(
-                          context,
-                        MaterialPageRoute(
-                              builder: (BuildContext context) => SearchPanel(
-                                  place: place,
-                                  price: price,
-                                  date: date,
-                                  exp: exp,
-                              ),
-                          ),
-                      );*/
-                    },
-                    child: const Text(
-                      "Buscar",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    )
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              Wrap(
-                spacing: 10,
-                children: [
-                  for (var cat in categories)
-                    _buildFilterChip(cat.name.toString()),
-                ],
-              ),
-              const SizedBox(height: 25),
-
-              // Recomendaciones para ti
-              const Text(
-                "Recomendaciones para ti",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 15),
-
-              ...recommendationsExp.map((expr) => _buildRecommendationCard(expr)).toList(),
-            ],
-          ),
+            ...recommendationsExp.map((expr) => _buildRecommendationCard(expr)).toList(),
+          ],
         ),
       ),
     );

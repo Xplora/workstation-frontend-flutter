@@ -1,5 +1,5 @@
 class AuthenticatedUserModel {
-  final int id;
+  final String id;
   final String token;
 
   AuthenticatedUserModel({

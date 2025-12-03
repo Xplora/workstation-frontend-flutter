@@ -34,6 +34,12 @@ class _AuthViewState extends State<AuthView> {
 
   BuildContext? _loadingDialogContext;
 
+
+
+  //                 SHOW MESSAGE
+
+
+
   void _showMessage(String message, Color color) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -76,6 +82,16 @@ class _AuthViewState extends State<AuthView> {
       _loadingDialogContext = null;
     }
   }
+
+
+
+
+
+
+  //                 VIEW
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -353,8 +369,8 @@ class _AuthViewState extends State<AuthView> {
         email: emailCtrl.text.trim(),
         password: passCtrl.text.trim(),
         rol: accountType,
-        agencyName: "",
-        ruc: "",
+        agencyName: "string",
+        ruc: "string",
       ),
     );
   }

@@ -22,9 +22,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     try {
       final result = await repo.login(
-        // NOTA: Tu LoginRequest usa 'username' y 'password',
-        // pero tu implementación usa 'email' en el evento.
-        // Asumo que tu backend espera el email en el campo 'username'.
         LoginRequest(event.email, event.password),
       );
 
@@ -53,11 +50,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.email,
         password: event.password,
         rol: event.rol,
-        agencyName: event.agencyName,
-        ruc: event.ruc,
+        agencyName: "string",
+        ruc: "string",
       );
 
       final ok = await repo.register(request);
+
+      print(request.toJson());
 
       if (!ok) {
         emit(AuthError("No se pudo registrar usuario."));
