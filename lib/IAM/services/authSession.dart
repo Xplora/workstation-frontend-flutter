@@ -17,9 +17,9 @@ class AuthSession {
     return prefs.getString(_tokenKey);
   }
 
-  static Future<int?> getUserId() async {
+  static Future<String?> getUserId() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt(_userIdKey);
+    return prefs.getString(_userIdKey);
   }
 
   static Future<void> clear() async {

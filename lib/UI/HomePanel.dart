@@ -7,12 +7,22 @@ import 'package:trip_match/models/user.dart';
 import 'package:trip_match/services/favoritesService.dart';
 import 'package:trip_match/utils/http_helper.dart';
 
+import '../IAM/services/authSession.dart';
+import '../models/tourist.dart';
+
 class HomePanel extends StatefulWidget {
   @override
   State<HomePanel> createState() => _HomePanelState();
 }
 
 class _HomePanelState extends State<HomePanel> {
+  String? token;
+  String? userId;
+  bool loading = true;
+
+  String nickname = "";
+  User? currentUser;
+
   String? selectedPlace;
   String? selectedCategory;
 
@@ -41,12 +51,17 @@ class _HomePanelState extends State<HomePanel> {
     });
   }
 
-  Future fetchCategories() async{
-    helper!.getCategories().then((value) {
-      setState(() {
-        categories = value;
-        catCount = categories!.length;
-      });
+  Future<void> loadSessionData() async {
+    token = await AuthSession.getToken();
+    userId = await AuthSession.getUserId();
+    currentUser = await helper!.getUser(userId!);
+    nickname = currentUser!.firstName!;
+    categories = await helper!.getCategories();
+
+
+    print("CATEGORÍAS CARGADAS: ${categories.length}");
+    setState(() {
+      loading = false;
     });
   }
 
@@ -56,7 +71,7 @@ class _HomePanelState extends State<HomePanel> {
     super.initState();
     helper = HttpHelper();
     fetchRecommendations();
-    fetchCategories();
+    loadSessionData();
   }
 
   @override
@@ -68,9 +83,9 @@ class _HomePanelState extends State<HomePanel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             //Title & Subtitle
-            const Text(
-              "Hola, NickName",
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            Text(
+              "Hola, $nickname",
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 5),
             const Text(
@@ -212,9 +227,10 @@ class _HomePanelState extends State<HomePanel> {
 
             Wrap(
               spacing: 10,
+              runSpacing: 10,
               children: [
                 for (var cat in categories)
-                  _buildFilterChip(cat.name.toString()),
+                  _buildFilterChip(cat.name!.toString()),
               ],
             ),
             const SizedBox(height: 25),

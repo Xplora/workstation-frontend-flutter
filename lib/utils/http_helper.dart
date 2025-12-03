@@ -1,18 +1,18 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:trip_match/IAM/services/authSession.dart';
 import 'package:trip_match/models/tourist.dart';
 import '../models/category.dart';
 import '../models/experience.dart';
 import '../models/user.dart';
 
 class HttpHelper {
-  final String urlBase = 'https://xplora-backend.onrender.com';
-  final String urlKey = '/api/v1/';
+  final String urlBase = 'http://localhost:5260/';
+  final String urlKey = 'api/v1/';
   final String urlExperiences = 'design/experience';
   final String urlCategory = 'design/category';
   final String urlUsers = 'profile/user/';
   final String urlTourist = 'profile/user/tourist/';
-  final String urlAuth = 'iam/auth';
 
   Future<List<Experience>> getExperiences() async {
     http.Response result = await http.get(Uri.parse('$urlBase$urlKey$urlExperiences'));
@@ -31,29 +31,46 @@ class HttpHelper {
   }
 
   Future<List<Category>> getCategories() async {
-    http.Response result = await http.get(Uri.parse('$urlBase$urlKey$urlCategory'));
+    final token = await AuthSession.getToken();
 
-    if (result.statusCode == 200) {
-      final jsonResponse = json.decode(result.body);
-      final categoryMap = jsonResponse['results'];
+    final res = await http.get(
+      Uri.parse('$urlBase$urlKey$urlCategory'),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+    );
 
-      List<Category> categories = categoryMap.map<Category>((i) =>
-          Category.fromJson(i)).toList();
+    if (res.statusCode == 200) {
+      final data = json.decode(res.body);
+
+      List<Category> categories =
+      (data as List).map((item) => Category.fromJson(item)).toList();
 
       return categories;
-    }else{
-      throw Exception('Error al obtener categorías');
+    } else {
+      throw Exception('Error al obtener categorías: ${res.statusCode}');
     }
   }
 
-  Future<User> getUser(String id) async {
-    http.Response result = await http.get(Uri.parse('$urlBase$urlKey$urlUsers$id'));
 
-    if (result.statusCode == 200) {
-      final jsonResponse = json.decode(result.body);
-      return User.fromJson(jsonResponse);
+
+  Future<User> getUser(String id) async {
+    final token = await AuthSession.getToken();
+
+    final res = await http.get(
+      Uri.parse('$urlBase$urlKey$urlUsers$id'),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json"
+      },
+    );
+
+    if (res.statusCode == 200) {
+      final data = json.decode(res.body);
+      return User.fromJson(data);
     } else {
-      throw Exception('Error al obtener usuario');
+      throw Exception('Error al obtener usuario: ${res.statusCode}');
     }
   }
 
