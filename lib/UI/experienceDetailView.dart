@@ -2,27 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:trip_match/models/experience.dart';
 import 'package:trip_match/UI/reservationView.dart';
 import 'package:trip_match/services/favoritesService.dart';
-/*
+
 class ExperienceDetailView extends StatefulWidget {
   final Experience experience;
+  final String userId;
 
-  const ExperienceDetailView({super.key, required this.experience});
+  const ExperienceDetailView({super.key, required this.experience, required this.userId});
 
   @override
   State<ExperienceDetailView> createState() => _ExperienceDetailViewState();
 }
 
 class _ExperienceDetailViewState extends State<ExperienceDetailView> {
-  //bool isFavorite = false;
-
-  //@override
-  //void initState() {
-  //  super.initState();
-  //  isFavorite = widget.experience.isFavorite;
-  //}
 
   @override
   Widget build(BuildContext context) {
+    final exp = widget.experience;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -35,18 +31,18 @@ class _ExperienceDetailViewState extends State<ExperienceDetailView> {
                 Stack(
                   children: [
                     Image.network(
-                      widget.experience.imageUrl,
+                      exp.experienceImages != null && exp.experienceImages!.isNotEmpty
+                          ? exp.experienceImages![0].url ?? ''
+                          :  '',
                       width: double.infinity,
                       height: 280,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          width: double.infinity,
-                          height: 280,
-                          color: Colors.grey.shade300,
-                          child: const Icon(Icons.image, size: 80, color: Colors.grey),
-                        );
-                      },
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: double.infinity,
+                        height: 280,
+                        color: Colors.grey.shade300,
+                        child: const Icon(Icons.image, size: 80, color: Colors.grey),
+                      ),
                     ),
                     Positioned(
                       top: 40,
@@ -65,19 +61,21 @@ class _ExperienceDetailViewState extends State<ExperienceDetailView> {
                       child: CircleAvatar(
                         backgroundColor: Colors.white.withOpacity(0.9),
                         child: ValueListenableBuilder<Set<String>>(
-                            valueListenable: favoritesNotifier,
-                            builder: (context, favIds, _) {
-                              final isFavorite = favIds.contains(widget.experience.id);
-                              return IconButton(
-                                icon: Icon(
-                                  isFavorite ? Icons.favorite : Icons.favorite_border,
-                                  color: isFavorite ? Colors.red : Colors.black,
-                                ),
-                                onPressed: () {
-                                  toggleFavoriteById(widget.experience.id);
-                                },
-                              );
-                            }
+                          valueListenable: favoritesNotifier,
+                          builder: (context, favIds, _) {
+                            final isFavorite = exp.id != null && favIds.contains(exp.id.toString());
+                            return IconButton(
+                              icon: Icon(
+                                isFavorite ? Icons.favorite : Icons.favorite_border,
+                                color: isFavorite ? Colors.red : Colors.black,
+                              ),
+                              onPressed: () {
+                                if(exp.id != null){
+                                  toggleFavoriteById(exp.id.toString(), widget.userId);
+                                }
+                              },
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -92,7 +90,7 @@ class _ExperienceDetailViewState extends State<ExperienceDetailView> {
                     children: [
                       // Título
                       Text(
-                        widget.experience.title,
+                        exp.title ?? "Sin título",
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -100,7 +98,7 @@ class _ExperienceDetailViewState extends State<ExperienceDetailView> {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        widget.experience.location,
+                        exp.location ?? "-",
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey.shade600,
@@ -111,25 +109,18 @@ class _ExperienceDetailViewState extends State<ExperienceDetailView> {
                       // Por empresa
                       Row(
                         children: [
-                          const Icon(
-                            Icons.storefront,
-                            size: 18,
-                            color: Color(0xFF2EBFAF),
-                          ),
+                          const Icon(Icons.storefront, size: 18, color: Color(0xFF2EBFAF)),
                           const SizedBox(width: 5),
                           Text(
-                            'Por ${widget.experience.provider}',
+                            'Por Company',
                             style: const TextStyle(
                               fontSize: 14,
                               color: Color(0xFF2EBFAF),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          const Icon(
-                            Icons.arrow_forward,
-                            size: 16,
-                            color: Color(0xFF2EBFAF),
-                          ),
+                          const SizedBox(width: 5),
+                          const Icon(Icons.arrow_forward, size: 16, color: Color(0xFF2EBFAF)),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -137,14 +128,11 @@ class _ExperienceDetailViewState extends State<ExperienceDetailView> {
                       // Descripción
                       const Text(
                         "Descripción",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        widget.experience.description,
+                        exp.description ?? "-",
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey.shade700,
@@ -156,33 +144,27 @@ class _ExperienceDetailViewState extends State<ExperienceDetailView> {
                       // Qué incluye
                       const Text(
                         "Qué incluye",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 10),
-                      ...widget.experience.includes.map((item) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "• ",
-                                  style: TextStyle(fontSize: 16),
+                      if (exp.includes != null && exp.includes!.isNotEmpty)
+                        ...exp.includes!.map((item) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("• ", style: TextStyle(fontSize: 16)),
+                              Expanded(
+                                child: Text(
+                                  item.toString() ,
+                                  style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
                                 ),
-                                Expanded(
-                                  child: Text(
-                                    item,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey.shade700,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
+                              ),
+                            ],
+                          ),
+                        ))
+                      else
+                        const Text("-", style: TextStyle(color: Colors.grey)),
                       const SizedBox(height: 100),
                     ],
                   ),
@@ -215,11 +197,8 @@ class _ExperienceDetailViewState extends State<ExperienceDetailView> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'S/${widget.experience.price.toInt()}',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        'S/${exp.price?.toInt() ?? 0}',
+                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -237,17 +216,13 @@ class _ExperienceDetailViewState extends State<ExperienceDetailView> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ReservationView(experience: widget.experience),
+                            builder: (context) => ReservationView(experience: exp),
                           ),
                         );
                       },
                       child: const Text(
                         'Reserva',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
                       ),
                     ),
                   ),
@@ -260,4 +235,3 @@ class _ExperienceDetailViewState extends State<ExperienceDetailView> {
     );
   }
 }
-*/

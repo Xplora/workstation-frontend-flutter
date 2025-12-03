@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:trip_match/baseScaffold.dart';
 import 'package:trip_match/UI/searchpanel.dart';
 import 'package:trip_match/models/experience.dart';
 import 'package:trip_match/models/category.dart';
@@ -8,7 +7,6 @@ import 'package:trip_match/services/favoritesService.dart';
 import 'package:trip_match/utils/http_helper.dart';
 
 import '../IAM/services/authSession.dart';
-import '../models/tourist.dart';
 
 class HomePanel extends StatefulWidget {
   @override
@@ -191,7 +189,7 @@ class _HomePanelState extends State<HomePanel> {
                     final date = dateController.text;
                     final exp = expController.text;
 
-                    /*Navigator.push(
+                    Navigator.push(
                         context,
                       MaterialPageRoute(
                             builder: (BuildContext context) => SearchPanel(
@@ -201,7 +199,7 @@ class _HomePanelState extends State<HomePanel> {
                                 exp: exp,
                             ),
                         ),
-                    );*/
+                    );
                   },
                   child: const Text(
                     "Buscar",

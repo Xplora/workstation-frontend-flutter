@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:trip_match/baseScaffold.dart';
 import 'package:trip_match/IAM/services/authSession.dart';
 import 'package:trip_match/models/tourist.dart';
 import 'package:trip_match/models/user.dart';
@@ -22,7 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> loadSessionData() async {
     try {
-      userId = await AuthSession.getUserId();        // ← SE GUARDA USERID PARA USO GLOBAL
+      userId = await AuthSession.getUserId();
 
       if(userId == null || userId!.isEmpty) {
         throw "No existe sesión activa";

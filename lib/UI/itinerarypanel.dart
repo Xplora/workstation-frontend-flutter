@@ -19,8 +19,6 @@ class _ItineraryPageState extends State<ItineraryPage> {
   Widget build(BuildContext context) {
     final TextEditingController searchController = TextEditingController();
 
-    // ERROR CORREGIDO: Eliminamos la envoltura de BaseScaffold aquí.
-    // BaseScaffold ya se aplica en main.dart cuando navegas a /itineraries.
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Column(

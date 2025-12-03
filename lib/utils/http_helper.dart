@@ -63,6 +63,36 @@ class HttpHelper {
     }
   }
 
+  Future<List<Experience>> searchExperiences({
+    String? lugar,
+    String? categoria,
+    String? precio,
+    String? fecha,
+  }) async {
+
+    final token = await AuthSession.getToken();
+
+    final query = Uri.parse("$urlBase$urlKey$urlExperiences").replace(queryParameters: {
+      if(lugar != null && lugar.isNotEmpty) "place" : lugar,
+      if(categoria != null && categoria.isNotEmpty) "experience" : categoria,
+      if(precio != null && precio.isNotEmpty) "price" : precio,
+      if(fecha != null && fecha.isNotEmpty) "date" : fecha,
+    });
+
+    final res = await http.get(query, headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    });
+
+    if(res.statusCode == 200){
+      final jsonBody = json.decode(res.body);
+      return (jsonBody as List).map((e) => Experience.fromJson(e)).toList();
+    }else{
+      throw Exception("Error consultando BD: ${res.statusCode}");
+    }
+  }
+
+
 
   //               CATEGORY
 
@@ -207,5 +237,7 @@ class HttpHelper {
     }
   }
 
+
+  //                     ITINERARY
 
 }
