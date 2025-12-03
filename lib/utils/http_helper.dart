@@ -209,7 +209,7 @@ class HttpHelper {
     final token = await AuthSession.getToken();
 
     final res = await http.delete(
-      Uri.parse('$urlBase$urlKey$urlFavorite$favoriteId'),
+      Uri.parse('$urlBase$urlKey$urlFavorite?experienceId=$favoriteId'),
       headers: {
         "Authorization": "Bearer $token",
         "Content-Type": "application/json"

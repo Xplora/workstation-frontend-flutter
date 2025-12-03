@@ -11,16 +11,29 @@ bool isFavoriteById(String id) => favoritesNotifier.value.contains(id);
 Future<void> toggleFavoriteById(String id, String userId) async {
   final newSet = {...favoritesNotifier.value};
 
-  if (newSet.contains(id)) {
-    newSet.remove(id);
-    await helper.deleteFavorite(int.parse(id));
-  } else {
-    newSet.add(id);
-    await helper.addFavorite(userId, int.parse(id));
-  }
+  try {
+    if (newSet.contains(id)) {
+      final success = await helper.deleteFavorite(int.parse(id));
+      if (success) {
+        newSet.remove(id);
+      } else {
+        print("No se pudo eliminar el favorito con id $id");
+      }
+    } else {
+      final success = await helper.addFavorite(userId, int.parse(id));
+      if (success) {
+        newSet.add(id);
+      } else {
+        print("No se pudo agregar el favorito con id $id");
+      }
+    }
 
-  favoritesNotifier.value = newSet;
+    favoritesNotifier.value = newSet;
+  } catch (e) {
+    print("Error al actualizar favoritos: $e");
+  }
 }
+
 
 Future<void> loadFavoritesFromDB(String userId) async {
   final favList = await helper.getFavorites(userId); // <-- tu GET al backend
